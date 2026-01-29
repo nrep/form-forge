@@ -110,6 +110,11 @@ class Field implements FieldInterface
         return new HiddenField($name);
     }
 
+    public static function radio(string $name): RadioField
+    {
+        return new RadioField($name);
+    }
+
     // Labels & Help
     public function label(string|Closure $label): static
     {
@@ -504,6 +509,7 @@ class Field implements FieldInterface
             'date' => DateField::class,
             'datetime' => DateTimeField::class,
             'hidden' => HiddenField::class,
+            'radio' => RadioField::class,
         ];
 
         return $map[$type] ?? TextField::class;

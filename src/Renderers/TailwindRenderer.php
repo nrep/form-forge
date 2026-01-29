@@ -41,7 +41,7 @@ class TailwindRenderer implements RendererInterface
 
         $html = '<div class="' . $this->getWrapperClass($field) . '">';
 
-        // Label (except for checkbox/toggle which have inline labels)
+        // Label (except for checkbox/toggle/radio which have inline labels, and hidden)
         if ($field->getLabel() && !in_array($field->getType(), ['checkbox', 'toggle', 'hidden'])) {
             $html .= $this->renderLabel($field);
         }
@@ -66,6 +66,7 @@ class TailwindRenderer implements RendererInterface
             'toggle' => $this->renderToggle($field, $value),
             'money' => $this->renderMoney($field, $value),
             'hidden' => $this->renderHidden($field, $value),
+            'radio' => $this->renderRadio($field, $value),
             default => $this->renderInput($field, $value),
         };
 
@@ -348,6 +349,46 @@ class TailwindRenderer implements RendererInterface
     protected function renderHidden(FieldInterface $field, mixed $value): string
     {
         return '<input type="hidden" name="' . htmlspecialchars($field->getName()) . '" value="' . htmlspecialchars((string)($value ?? '')) . '">';
+    }
+
+    protected function renderRadio(FieldInterface $field, mixed $value): string
+    {
+        $data = $field->toArray();
+        $options = $data['options'] ?? [];
+        $isGrid = $data['showAsGrid'] ?? false;
+        $gridCols = $data['gridCols'] ?? 4;
+        $isInline = $data['inline'] ?? false;
+
+        $containerClass = $isGrid 
+            ? 'grid grid-cols-' . $gridCols . ' gap-2'
+            : ($isInline ? 'flex flex-wrap gap-4' : 'space-y-2');
+
+        $html = '<div class="' . $containerClass . '">';
+
+        foreach ($options as $optValue => $optLabel) {
+            $checked = (string)$value === (string)$optValue ? ' checked' : '';
+            $id = $field->getName() . '_' . $optValue;
+
+            $html .= '<label class="inline-flex items-center cursor-pointer">';
+            $html .= '<input type="radio" name="' . htmlspecialchars($field->getName()) . '" ';
+            $html .= 'id="' . htmlspecialchars($id) . '" ';
+            $html .= 'value="' . htmlspecialchars((string)$optValue) . '"' . $checked;
+            $html .= ' class="rounded-full border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"';
+
+            // Alpine directives
+            foreach ($data['alpine'] as $directive => $expression) {
+                $html .= ' ' . $directive . '="' . htmlspecialchars($expression) . '"';
+            }
+
+            $html .= '>';
+            $html .= '<span class="ml-2 text-sm text-gray-700 dark:text-gray-300">'
+                . htmlspecialchars($optLabel)
+                . '</span>';
+            $html .= '</label>';
+        }
+
+        $html .= '</div>';
+        return $html;
     }
 
     protected function getWrapperClass(FieldInterface $field): string
