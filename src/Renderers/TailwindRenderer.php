@@ -424,16 +424,87 @@ class TailwindRenderer implements RendererInterface
         $errors = $options['errors'] ?? [];
 
         foreach ($form->getFields() as $field) {
-            $name = $field->getName();
-            $value = $values[$name] ?? $field->getDefault();
-            $error = $errors[$name] ?? null;
-
-            $html .= $this->renderField($field, [
-                'value' => $value,
-                'error' => $error,
-            ]);
+            $html .= $this->renderItem($field, $values, $errors);
         }
 
+        return $html;
+    }
+
+    protected function renderItem($item, array $values, array $errors): string
+    {
+        // Check if it's a layout component
+        if (method_exists($item, 'isLayout') && $item->isLayout()) {
+            return $this->renderLayout($item, $values, $errors);
+        }
+
+        // Regular field
+        $name = $item->getName();
+        $value = $values[$name] ?? $item->getDefault();
+        $error = $errors[$name] ?? null;
+
+        return $this->renderField($item, [
+            'value' => $value,
+            'error' => $error,
+        ]);
+    }
+
+    protected function renderLayout($layout, array $values, array $errors): string
+    {
+        $type = $layout->getType();
+
+        return match ($type) {
+            'grid' => $this->renderGrid($layout, $values, $errors),
+            'section' => $this->renderSection($layout, $values, $errors),
+            default => $this->renderDefaultLayout($layout, $values, $errors),
+        };
+    }
+
+    protected function renderGrid($grid, array $values, array $errors): string
+    {
+        $cols = $grid->getColumns();
+        $gap = $grid->getGap();
+
+        $html = '<div class="grid grid-cols-1 md:grid-cols-' . $cols . ' gap-' . $gap . '">';
+
+        foreach ($grid->getFields() as $field) {
+            $html .= $this->renderItem($field, $values, $errors);
+        }
+
+        $html .= '</div>';
+        return $html;
+    }
+
+    protected function renderSection($section, array $values, array $errors): string
+    {
+        $html = '<div class="' . ($section->getClass() ?? 'space-y-4') . '">';
+
+        if ($section->getHeading()) {
+            $html .= '<h3 class="text-lg font-medium text-gray-900 dark:text-white">'
+                . htmlspecialchars($section->getHeading())
+                . '</h3>';
+        }
+
+        if ($section->getDescription()) {
+            $html .= '<p class="text-sm text-gray-500 dark:text-gray-400">'
+                . htmlspecialchars($section->getDescription())
+                . '</p>';
+        }
+
+        foreach ($section->getFields() as $field) {
+            $html .= $this->renderItem($field, $values, $errors);
+        }
+
+        $html .= '</div>';
+        return $html;
+    }
+
+    protected function renderDefaultLayout($layout, array $values, array $errors): string
+    {
+        $html = '<div>';
+        foreach ($layout->getFields() as $field) {
+            $html .= $this->renderItem($field, $values, $errors);
+        }
+        $html .= '</div>';
         return $html;
     }
 }
