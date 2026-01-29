@@ -455,6 +455,7 @@ class TailwindRenderer implements RendererInterface
         return match ($type) {
             'grid' => $this->renderGrid($layout, $values, $errors),
             'section' => $this->renderSection($layout, $values, $errors),
+            'html' => $layout->render(),
             default => $this->renderDefaultLayout($layout, $values, $errors),
         };
     }
