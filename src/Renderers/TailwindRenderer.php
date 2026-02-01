@@ -432,13 +432,17 @@ class TailwindRenderer implements RendererInterface
 
     protected function renderItem($item, array $values, array $errors): string
     {
-        // Check if it's a layout component
-        if (method_exists($item, 'isLayout') && $item->isLayout()) {
+        // Check if it's a layout component (implements LayoutInterface or has getType method returning layout types)
+        if ($item instanceof \FormForge\Contracts\LayoutInterface || 
+            (method_exists($item, 'getType') && in_array($item->getType(), ['section', 'grid', 'html']))) {
             return $this->renderLayout($item, $values, $errors);
         }
 
         // Regular field
         $name = $item->getName();
+        if ($name === null) {
+            return ''; // Skip items without names
+        }
         $value = $values[$name] ?? $item->getDefault();
         $error = $errors[$name] ?? null;
 
