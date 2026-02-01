@@ -448,7 +448,7 @@ class TailwindRenderer implements RendererInterface
         ]);
     }
 
-    protected function renderLayout($layout, array $values, array $errors): string
+    public function renderLayout($layout, array $values, array $errors): string
     {
         $type = $layout->getType();
 

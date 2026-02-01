@@ -84,6 +84,21 @@ class Section implements LayoutInterface
         return null;
     }
 
+    public function getType(): string
+    {
+        return 'section';
+    }
+
+    public function getHeading(): ?string
+    {
+        return $this->title;
+    }
+
+    public function getClass(): ?string
+    {
+        return !empty($this->classes) ? implode(' ', $this->classes) : null;
+    }
+
     public function render(): string
     {
         $classes = array_merge(['bg-white', 'dark:bg-gray-800', 'rounded-lg', 'shadow-sm', 'border', 'border-gray-200', 'dark:border-gray-700', 'p-6', 'mb-6'], $this->classes);

@@ -112,7 +112,17 @@ class Form implements FormInterface
         $html = '';
 
         foreach ($this->fields as $field) {
+            // Handle layout components (Section, Grid, Html) differently
+            if ($field instanceof \FormForge\Contracts\LayoutInterface) {
+                $html .= $renderer->renderLayout($field, $this->values, $this->errors);
+                continue;
+            }
+
             $name = $field->getName();
+            if ($name === null) {
+                continue; // Skip items without names
+            }
+            
             $value = $this->values[$name] ?? $field->getDefault();
             $error = $this->errors[$name] ?? null;
 

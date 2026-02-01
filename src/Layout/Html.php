@@ -42,6 +42,11 @@ class Html implements LayoutInterface
         return null;
     }
 
+    public function getType(): string
+    {
+        return 'html';
+    }
+
     public function render(): string
     {
         return $this->content;
