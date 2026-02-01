@@ -44,10 +44,16 @@ class Field implements FieldInterface
     }
 
     // Factory methods
-    public static function make(string $type, string $name): static
+    public static function make(string $nameOrType, ?string $name = null): static
     {
-        $class = self::resolveFieldClass($type);
-        return new $class($name);
+        // If called with 2 args, first is type, second is name (Field::make('text', 'field_name'))
+        // If called with 1 arg from subclass, it's the name (TextField::make('field_name'))
+        if ($name !== null) {
+            $class = self::resolveFieldClass($nameOrType);
+            return new $class($name);
+        }
+        // Called from subclass with just name
+        return new static($nameOrType);
     }
 
     public static function text(string $name): TextField

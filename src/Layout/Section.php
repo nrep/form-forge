@@ -74,6 +74,16 @@ class Section implements LayoutInterface
         return $this->fields;
     }
 
+    public function getName(): ?string
+    {
+        return null;
+    }
+
+    public function getDefault(): mixed
+    {
+        return null;
+    }
+
     public function render(): string
     {
         $classes = array_merge(['bg-white', 'dark:bg-gray-800', 'rounded-lg', 'shadow-sm', 'border', 'border-gray-200', 'dark:border-gray-700', 'p-6', 'mb-6'], $this->classes);

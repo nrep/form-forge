@@ -43,6 +43,16 @@ class Grid
         return $this->fields;
     }
 
+    public function getName(): ?string
+    {
+        return null;
+    }
+
+    public function getDefault(): mixed
+    {
+        return null;
+    }
+
     public function getColumns(): int
     {
         return $this->columns;

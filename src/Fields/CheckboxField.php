@@ -22,6 +22,15 @@ class CheckboxField extends Field
         return $this;
     }
 
+    public function checked(bool $checked = true): static
+    {
+        $this->default = $checked ? $this->checkedValue : $this->uncheckedValue;
+        if ($checked) {
+            $this->attrs['checked'] = 'checked';
+        }
+        return $this;
+    }
+
     public function getCheckedValue(): mixed
     {
         return $this->checkedValue;

@@ -31,6 +31,12 @@ class MoneyField extends Field
         return $this;
     }
 
+    public function step(string $step): static
+    {
+        $this->attrs['step'] = $step;
+        return $this;
+    }
+
     public function getCurrency(): string
     {
         return $this->currency;

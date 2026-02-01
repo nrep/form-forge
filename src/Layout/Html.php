@@ -32,6 +32,16 @@ class Html implements LayoutInterface
         return $this->fields;
     }
 
+    public function getName(): ?string
+    {
+        return null;
+    }
+
+    public function getDefault(): mixed
+    {
+        return null;
+    }
+
     public function render(): string
     {
         return $this->content;
