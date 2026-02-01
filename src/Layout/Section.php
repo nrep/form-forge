@@ -94,6 +94,11 @@ class Section implements LayoutInterface
         return $this->title;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
     public function getClass(): ?string
     {
         return !empty($this->classes) ? implode(' ', $this->classes) : null;
