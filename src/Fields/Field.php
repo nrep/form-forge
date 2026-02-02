@@ -417,6 +417,18 @@ class Field implements FieldInterface
         return $this->default;
     }
 
+    public function value(mixed $value): static
+    {
+        $this->default = $value;
+        return $this;
+    }
+
+    public function default(mixed $value): static
+    {
+        $this->default = $value;
+        return $this;
+    }
+
     public function getClass(): array
     {
         return $this->class;
